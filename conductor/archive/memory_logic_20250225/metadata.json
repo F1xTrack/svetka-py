@@ -1,0 +1,8 @@
+{
+  "track_id": "memory_logic_20250225",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-02-25T20:19:08Z",
+  "updated_at": "2026-02-25T20:19:08Z",
+  "description": "Memory & Context Logic: Алгоритмы сжатия истории диалога, фоновая саммаризация, семантический поиск по долгосрочной памяти (RAG)."
+}

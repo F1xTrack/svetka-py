@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Svetka Error Overlay</title>
+    <style>
+        :root {
+            --bg-opacity: 0.8;
+            --accent-color: #FF5555;
+            --bg-color: rgba(50, 50, 50, var(--bg-opacity));
+            --text-color: #ffffff;
+            --border-radius: 10px;
+            --font-size: 16px;
+            --padding: 20px;
+            --border-width: 2px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: transparent;
+            overflow: hidden;
+            user-select: none;
+            cursor: move;
+        }
+
+        .overlay-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: var(--padding);
+        }
+
+        .error-card {
+            background: var(--bg-color);
+            border: var(--border-width) solid var(--accent-color);
+            border-radius: var(--border-radius);
+            padding: calc(var(--padding) * 1.5);
+            min-width: 300px;
+            max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .error-card.fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        .error-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .error-icon {
+            font-size: 24px;
+            color: var(--accent-color);
+        }
+
+        .error-title {
+            color: var(--text-color);
+            font-size: calc(var(--font-size) * 1.2);
+            font-weight: 600;
+        }
+
+        .error-message {
+            color: var(--text-color);
+            font-size: var(--font-size);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .error-details {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: calc(var(--font-size) * 0.85);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: var(--font-size);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-color);
+            border-radius: 2px;
+            transition: width 0.1s linear;
+        }
+
+        .drag-handle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            cursor: move;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--text-color);
+        }
+
+        /* Color variants */
+        .color-red { --accent-color: #FF5555; }
+        .color-blue { --accent-color: #5555FF; }
+        .color-green { --accent-color: #55FF55; }
+        .color-yellow { --accent-color: #FFFF55; }
+        .color-purple { --accent-color: #FF55FF; }
+        .color-orange { --accent-color: #FFAA55; }
+    </style>
+</head>
+<body>
+    <div class="overlay-container" id="overlay">
+        <div class="error-card" id="errorCard">
+            <button class="close-btn" onclick="closeOverlay()">×</button>
+            <div class="error-header">
+                <span class="error-icon" id="errorIcon">⚠️</span>
+                <span class="error-title" id="errorTitle">Error Occurred</span>
+            </div>
+            <div class="error-message" id="errorMessage">
+                An error has occurred. Please check the logs for more details.
+            </div>
+            <div class="error-details" id="errorDetails" style="display: none;">
+                <strong>Details:</strong>
+                <pre id="errorStack"></pre>
+            </div>
+            <div class="error-actions">
+                <button class="btn btn-secondary" onclick="copyError()">📋 Copy</button>
+                <button class="btn btn-primary" onclick="closeOverlay()">OK</button>
+            </div>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let autoCloseTimer;
+        let progressInterval;
+        let autoCloseSeconds = 5;
+        let currentProgress = 100;
+
+        // Получение настроек из URL параметров
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        function applySettings() {
+            const opacity = urlParams.get('opacity') || 80;
+            const colorIndex = urlParams.get('color') || 0;
+            const autoClose = urlParams.get('autoClose') || 5;
+            const message = urlParams.get('message');
+            const title = urlParams.get('title');
+            const details = urlParams.get('details');
+
+            // Применение прозрачности
+            document.documentElement.style.setProperty('--bg-opacity', opacity / 100);
+
+            // Применение цвета
+            const colors = ['color-red', 'color-blue', 'color-green', 'color-yellow', 'color-purple', 'color-orange'];
+            const errorCard = document.getElementById('errorCard');
+            errorCard.className = 'error-card ' + (colors[colorIndex] || 'color-red');
+
+            // Применение таймера
+            autoCloseSeconds = parseInt(autoClose);
+            if (autoCloseSeconds > 0) {
+                startAutoClose();
+            } else {
+                document.getElementById('progressBar').style.display = 'none';
+            }
+
+            // Применение текста
+            if (message) {
+                document.getElementById('errorMessage').textContent = decodeURIComponent(message);
+            }
+            if (title) {
+                document.getElementById('errorTitle').textContent = decodeURIComponent(title);
+            }
+            if (details) {
+                document.getElementById('errorDetails').style.display = 'block';
+                document.getElementById('errorStack').textContent = decodeURIComponent(details);
+            }
+        }
+
+        function startAutoClose() {
+            currentProgress = 100;
+            updateProgress();
+            
+            progressInterval = setInterval(() => {
+                currentProgress -= (100 / (autoCloseSeconds * 10));
+                updateProgress();
+                
+                if (currentProgress <= 0) {
+                    closeOverlay();
+                }
+            }, 100);
+        }
+
+        function updateProgress() {
+            document.getElementById('progressFill').style.width = currentProgress + '%';
+        }
+
+        function closeOverlay() {
+            clearInterval(progressInterval);
+            clearTimeout(autoCloseTimer);
+            
+            const errorCard = document.getElementById('errorCard');
+            errorCard.classList.add('fade-out');
+            
+            setTimeout(() => {
+                window.pywebview.api.closeWindow();
+            }, 500);
+        }
+
+        function copyError() {
+            const message = document.getElementById('errorMessage').textContent;
+            const details = document.getElementById('errorStack').textContent;
+            const textToCopy = message + (details ? '\n\nDetails:\n' + details : '');
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Drag-and-drop функциональность
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+
+        document.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('error-card') || 
+                e.target.classList.contains('error-header') ||
+                e.target.classList.contains('error-message')) {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                
+                const rect = document.getElementById('errorCard').getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                
+                document.getElementById('errorCard').style.cursor = 'grabbing';
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            
+            const errorCard = document.getElementById('errorCard');
+            errorCard.style.position = 'absolute';
+            errorCard.style.left = (initialLeft + dx) + 'px';
+            errorCard.style.top = (initialTop + dy) + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                document.getElementById('errorCard').style.cursor = 'move';
+                
+                // Сохранение позиции
+                const rect = document.getElementById('errorCard').getBoundingClientRect();
+                window.pywebview.api.savePosition(rect.left, rect.top);
+            }
+        });
+
+        // Инициализация при загрузке
+        applySettings();
+    </script>
+</body>
+</html>

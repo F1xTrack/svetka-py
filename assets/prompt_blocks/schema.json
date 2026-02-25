@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Prompt Block Schema",
+  "description": "Схема для модульных prompt блоков Svetka-py",
+  "type": "object",
+  "required": ["id", "name", "category", "content"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Уникальный идентификатор блока",
+      "pattern": "^[a-z_][a-z0-9_]*$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Человекочитаемое название блока"
+    },
+    "category": {
+      "type": "string",
+      "description": "Категория блока",
+      "enum": ["roles", "styles", "behaviors", "constraints", "intelligence", "humor", "habits", "context", "tone", "special_modes"]
+    },
+    "content": {
+      "type": "string",
+      "description": "Содержимое prompt блока с поддержкой {{tags}}"
+    },
+    "description": {
+      "type": "string",
+      "description": "Описание блока для UI"
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Теги для поиска и фильтрации"
+    },
+    "variables": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Список используемых {{variable}} в контенте"
+    },
+    "conditional_logic": {
+      "type": "object",
+      "description": "Условная логика для блока",
+      "properties": {
+        "requires": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Блоки, которые должны быть активны"
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Блоки, которые не могут быть активны одновременно"
+        }
+      }
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Приоритет блока (0-100)",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "locale": {
+      "type": "string",
+      "description": "Локаль блока",
+      "default": "ru"
+    }
+  }
+}

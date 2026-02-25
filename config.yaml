@@ -1,0 +1,105 @@
+# Svetka AI Config File
+vision:
+  enabled: true
+  fps: 5
+  capture_region:
+  - 0
+  - 0
+  - 1920
+  - 1080
+  model: vit_base_patch16_siglip_384
+  threshold: 0.5
+  gpu_acceleration: true
+  debug_mode: false
+  save_raw_video: false
+  process_interval: 0.2
+  use_half_precision: true
+  screenshot_format: png
+  jpeg_quality: 85
+  max_resolution: [1920, 1080]
+  min_resolution: [640, 480]
+  auto_exposure: true
+  contrast: 1.0
+  brightness: 1.0
+  color_mode: RGB
+audio:
+  mic_enabled: true
+  mic_index: -1
+  sample_rate: 16000
+  channels: 1
+  noise_cancellation: true
+  volume_threshold: 0.01
+  stt_model: whisper-base
+  stt_language: auto
+  tts_enabled: true
+  tts_voice: ru-RU-SvetlanaNeural
+  tts_rate: +0%
+  tts_volume: +0%
+  tts_pitch: +0Hz
+  system_audio_enabled: false
+  audio_buffer_size: 1024
+  echo_cancellation: true
+  auto_gain: true
+api:
+  base_url: https://api.aitunnel.ru/v1/
+  api_key: YOUR_API_KEY
+  model_name: gpt-4o-mini
+  temperature: 0.7
+  max_tokens: 512
+  timeout: 30
+  proxy: null
+  retry_count: 3
+  history_limit: 20
+  presence_penalty: 0.0
+  frequency_penalty: 0.0
+  top_p: 1.0
+  stream: false
+  seed: null
+personality:
+  name: Svetka
+  style: Helper
+  sarcasm_level: 0.2
+  formality: Neutral
+  humor_level: 0.5
+  aggression_level: 0.1
+  empathy: 0.8
+  memory_enabled: true
+  knowledge_cutoff: 2023-10
+  proactive_mode: true
+  verbosity: Normal
+  creativity: 0.5
+  tone: Friendly
+memory:
+  storage_type: json
+  db_path: memory.db
+  long_term_enabled: true
+  short_term_limit: 100
+  summary_trigger: 50
+  relevance_threshold: 0.7
+  embedding_model: text-embedding-3-small
+  compression_ratio: 0.5
+  auto_backup: true
+  backup_interval: 3600
+  max_memory_items: 10000
+  forget_threshold: 0.3
+  rag_enabled: true
+  vector_store_path: vector_store
+privacy:
+  screen_logging_enabled: true
+  audio_logging_enabled: true
+  keystroke_logging: false
+  data_retention_days: 30
+  encrypt_local_data: false
+  share_analytics: false
+  cloud_sync: false
+  mask_sensitive_data: true
+  sensitive_patterns: ["password", "credit_card", "ssn"]
+appearance:
+  theme: Dark
+  language: ru
+  font_size: 14
+  show_notifications: true
+  notification_sound: true
+  minimize_to_tray: true
+  start_minimized: false
+  always_on_top: false

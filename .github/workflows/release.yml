@@ -1,0 +1,52 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        run: |
+          pip install poetry
+          poetry --version
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Build EXE with PyInstaller
+        run: |
+          poetry run pyinstaller svetka.spec
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/SvetkaAI.exe
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: true
+          body: |
+            ## Svetka-py v0.1 Beta
+            Первая публичная бета-версия проактивного ИИ-компаньона.
+            
+            ### Возможности:
+            - Проактивный Brain Logic (автономные решения).
+            - Захват экрана и аудио в реальном времени.
+            - Динамическое сжатие контекста (400k токенов).
+            - Конструктор промптов (100+ блоков).
+            - 50+ настроек в PyQt6/Web-UI.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
