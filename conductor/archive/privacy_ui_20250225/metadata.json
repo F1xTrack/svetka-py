@@ -1,8 +1,0 @@
-{
-  "track_id": "privacy_ui_20250225",
-  "type": "feature",
-  "status": "new",
-  "created_at": "2026-02-25T20:10:53Z",
-  "updated_at": "2026-02-25T20:10:53Z",
-  "description": "Privacy Settings UI (Tab 7): Черные списки приложений, маскирование экрана, Offline-only режим и аудит данных."
-}

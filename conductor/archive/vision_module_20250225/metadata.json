@@ -1,8 +1,0 @@
-{
-  "track_id": "vision_module_20250225",
-  "type": "feature",
-  "status": "new",
-  "created_at": "2026-02-25T20:13:37Z",
-  "updated_at": "2026-02-25T20:13:37Z",
-  "description": "Vision Processing Module: Логика захвата экрана (MSS), обработка OpenCV (ресайз, фильтры, Blur), детекция движения и генерация видео-фрагментов .webm."
-}
